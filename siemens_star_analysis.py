@@ -89,7 +89,7 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
         siemens_radius (int): Siemens Star radius in mm.
         siemens_freq (int): Amount of black and white line pairs in the Siemens
         Star.
-        phys_mag (float)): Physical magnification due to the system's optics.
+        phys_mag (float): Physical magnification due to the system's optics.
         ext_r (int): External radius in pixels.
         zoom (int, optional): Zoom applied to the acquisition. If present, the
         external radius (ext_r) must be the same as in the image without zoom
@@ -101,7 +101,7 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
     """
 
     res_R = res_radius * siemens_radius * phys_mag / (ext_r * zoom)
-    res = 2*np.pi*res_R/siemens_freq
+    res = 2 * np.pi * res_R / siemens_freq
 
     return res
 
@@ -115,10 +115,6 @@ def find_resolution(img, x0, y0, radii, interactive=False):
 
     contrast = np.zeros(len(radii))
     contrast_unc = np.zeros(len(radii))
-    
-    found_res = False
-    res_radius = 0
-    res_MTF = 0.0    
     
     for index, R in enumerate(radii):
 
@@ -136,24 +132,6 @@ def find_resolution(img, x0, y0, radii, interactive=False):
         contrast[index],contrast_unc[index],Imax,Imin = calculate_contrast(
                                                             values[maxima],
                                                             values[minima])
-        if not found_res:
-            if R > res_radius: # Radii in increasing order
-                if index == 0 or contrast[index] < 0.1:
-                    # Force resolution at the minimum radius in case it 
-                    # already has MTF > 0.1. Also keeps updating resolution
-                    # while MTF < 0.1.
-                    res_radius = R
-                    res_MTF = contrast[index]
-                
-                else:
-                    found_res = True
-        
-            else: # Radii in decreasing order
-                if contrast[index] > 0.1: # Keep updating while MTF > 0.1
-                    res_radius = R
-                    res_MTF = contrast[index]
-                else:
-                    found_res = True
         
         if interactive:
             plt.figure()
@@ -169,10 +147,14 @@ def find_resolution(img, x0, y0, radii, interactive=False):
             plt.waitforbuttonpress()
             plt.close()
 
+    ind = np.abs(contrast - 0.1).argmin()
+    res_radius = radii[ind]
+    res_MTF = contrast[ind]
+
     print(f'Found resolution at R={res_radius} pix, MTF={res_MTF}')
 
     return res_radius, res_MTF, contrast, contrast_unc
-    
+
 
 def plot_MTF_radius(radii, contrast, contrast_unc=None):
 
