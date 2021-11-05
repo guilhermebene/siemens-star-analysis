@@ -3,6 +3,7 @@ import spyrit.misc.walsh_hadamard as wh
 from scipy.io import loadmat
 from matplotlib import pyplot as plt
 from scipy.signal import find_peaks
+from scipy.optimize import curve_fit
 
 
 def show_acquisition(recon_sum_norm, recon_sum, recon_sum_normalized, x0, y0):    
@@ -87,8 +88,7 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
     Args:
         res_radius (int): Radius in pixels at which resolution is determined.
         siemens_radius (int): Siemens Star radius in mm.
-        siemens_freq (int): Amount of black and white line pairs in the Siemens
-        Star.
+        siemens_freq (int): Amount of black black bars in the Siemens Star.
         phys_mag (float): Physical magnification due to the system's optics.
         ext_r (int): External radius in pixels.
         zoom (int, optional): Zoom applied to the acquisition. If present, the
@@ -101,7 +101,7 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
     """
 
     res_R = res_radius * siemens_radius * phys_mag / (ext_r * zoom)
-    res = 2 * np.pi * res_R / siemens_freq
+    res = 2 * np.pi * res_R / (2 * siemens_freq)
 
     return res
 
@@ -185,3 +185,16 @@ def plot_MTF_freq(radii, contrast, contrast_unc=None):
     plt.ylabel('Contrast')
     plt.title('MTF')
     plt.legend()
+
+
+def reciprocal_func(x, A, B):
+        return A/x + B
+
+
+def resolution_curve_coeffs(zooms, resolutions):
+
+    popt, pcov = curve_fit(reciprocal_func, zooms, resolutions)
+
+    return popt[0], popt[1]
+
+    
