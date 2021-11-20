@@ -187,14 +187,14 @@ def plot_MTF_freq(radii, contrast, contrast_unc=None):
     plt.legend()
 
 
-def reciprocal_func(x, A, B):
-        return A/x + B
+def reciprocal_func(x, A):
+        return A/x
 
 
 def resolution_curve_coeffs(zooms, resolutions):
 
     popt, pcov = curve_fit(reciprocal_func, zooms, resolutions)
 
-    return popt[0], popt[1]
+    return popt[0]
 
     
