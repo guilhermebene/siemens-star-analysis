@@ -101,7 +101,7 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
     """
 
     res_R = res_radius * siemens_radius * phys_mag / (ext_r * zoom)
-    res = 2 * np.pi * res_R / (2 * siemens_freq)
+    res = 2 * np.pi * res_R / siemens_freq
 
     return res
 
@@ -172,7 +172,7 @@ def plot_MTF_radius(radii, contrast, contrast_unc=None):
 
 def plot_MTF_freq(radii, contrast, contrast_unc=None):    
     
-    freqs = [get_freq(R, 36) for R in radii]
+    freqs = [get_freq(R,36) for R in radii]
     
     plt.figure()
     plt.plot(freqs,contrast, label='MTF')
