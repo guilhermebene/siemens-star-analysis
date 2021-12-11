@@ -59,6 +59,10 @@ def get_freq(radius, Np):
     return freq
 
 
+def calculate_lpmm(radius):
+    
+
+
 def calculate_contrast(maxima, minima):
     
     Imax = np.median(maxima)
@@ -86,18 +90,25 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
     """Calculates resolution in mm.
 
     Args:
-        res_radius (int): Radius in pixels at which resolution is determined.
-        siemens_radius (int): Siemens Star radius in mm.
-        siemens_freq (int): Amount of black black bars in the Siemens Star.
-        phys_mag (float): Physical magnification due to the system's optics.
-        ext_r (int): External radius in pixels.
-        zoom (int, optional): Zoom applied to the acquisition. If present, the
-        external radius (ext_r) must be the same as in the image without zoom
-        and this function will calculate the correct external radius after
-        zooming. Defaults to 1.
+        res_radius (int): 
+            Radius in pixels at which resolution is determined.
+        siemens_radius (int): 
+            Siemens Star radius in mm.
+        siemens_freq (int): 
+            Amount of black black bars in the Siemens Star.
+        phys_mag (float): 
+            Physical magnification due to the system's optics.
+        ext_r (int): 
+            External radius in pixels.
+        zoom (int, optional): 
+            Zoom applied to the acquisition. If present, the external radius 
+            (ext_r) must be the same as in the image without zoom and this 
+            function will calculate the correct external radius after zooming. 
+            Defaults to 1.
 
     Returns:
-        float: Real resolution at the object plane.
+        float: 
+            Real resolution at the object plane.
     """
 
     res_R = res_radius * siemens_radius * phys_mag / (ext_r * zoom)
