@@ -1,6 +1,5 @@
+import math
 import numpy as np
-import spyrit.misc.walsh_hadamard as wh
-from scipy.io import loadmat
 from matplotlib import pyplot as plt
 from scipy.signal import find_peaks
 from scipy.optimize import curve_fit
@@ -59,8 +58,43 @@ def get_freq(radius, Np):
     return freq
 
 
-def calculate_lpmm(radius):
+def pix_to_mm(res_radius: int, siemens_radius: int, phys_mag: float, ext_r: int,
+              zoom:int=1) -> float:
     
+    return res_radius * siemens_radius * phys_mag / (ext_r * zoom)    
+
+
+def calculate_lpmm(radius_pix: int, siemens_freq: int, siemens_radius: int,
+                   phys_mag: float, ext_r: int, zoom:int=1) -> float:
+    """Calculates resolution in linepairs per millimter (lp/mm).
+
+    Args:
+        radius_pix (int): 
+            Radius in pixels at which resolution is determined.
+        siemens_freq (int): 
+            Amount of black black bars in the Siemens Star.
+        siemens_radius (int): 
+            Siemens Star radius in mm.
+        phys_mag (float):
+            Physical magnification due to the system's optics.
+        ext_r (int): 
+            External radius in pixels.
+        zoom (int, optional): 
+            Zoom applied to the acquisition. If present, the external radius 
+            (ext_r) must be the same as in the image without zoom and this 
+            function will calculate the correct external radius after zooming. 
+            Defaults to 1.
+
+    Returns:
+        float: resolution in lp/mm.
+    """
+    
+    
+    radius_mm = pix_to_mm(radius_pix, siemens_radius, phys_mag, ext_r, zoom)
+    theta = 2 * math.pi  / siemens_freq
+    c = 2 * radius_mm * math.sin(theta)
+    
+    return 1/c
 
 
 def calculate_contrast(maxima, minima):
@@ -111,8 +145,8 @@ def object_resolution(res_radius: int, siemens_radius: int, siemens_freq: int,
             Real resolution at the object plane.
     """
 
-    res_R = res_radius * siemens_radius * phys_mag / (ext_r * zoom)
-    res = 2 * np.pi * res_R / siemens_freq
+    res_r = pix_to_mm(res_radius, siemens_radius, phys_mag, ext_r, zoom)
+    res = 2 * np.pi * res_r / siemens_freq
 
     return res
 
@@ -206,6 +240,4 @@ def resolution_curve_coeffs(zooms, resolutions):
 
     popt, pcov = curve_fit(reciprocal_func, zooms, resolutions)
 
-    return popt[0]
-
-    
+    return popt[0]   
