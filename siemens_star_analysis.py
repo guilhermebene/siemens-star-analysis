@@ -210,7 +210,7 @@ def plot_MTF_radius(radii, contrast, contrast_unc=None):
     if contrast_unc is not None:
         plt.errorbar(radii,contrast,yerr=contrast_unc, label='MTF error')
         
-    plt.xlabel('Radius (mm)')
+    plt.xlabel('Radius (pix)')
     plt.ylabel('Contrast')
     plt.legend()
 
