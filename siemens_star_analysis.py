@@ -193,6 +193,11 @@ def find_resolution(img, x0, y0, radii, interactive=False):
             plt.close()
 
     ind = np.abs(contrast - 0.1).argmin()
+    
+    # Forcing the contrast to be at least 0.1
+    if contrast[ind] < 0.1:
+        ind += 1
+    
     res_radius = radii[ind]
     res_MTF = contrast[ind]
 
