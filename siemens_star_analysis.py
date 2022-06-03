@@ -92,7 +92,7 @@ def calculate_lpmm(radius_pix: int, siemens_freq: int, siemens_radius: int,
     
     radius_mm = pix_to_mm(radius_pix, siemens_radius, phys_mag, ext_r, zoom)
     theta = 2 * math.pi  / siemens_freq
-    c = 2 * radius_mm * math.sin(theta)
+    c = 2 * radius_mm * math.sin(theta/2)
     
     return 1/c
 
